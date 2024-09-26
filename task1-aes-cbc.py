@@ -1,5 +1,6 @@
-# SOME FUNCTIONALITY OF THIS CODE IS DERIVED FROM EXAMPLE CODE OF LECTORIAL 5 
-# File Reference: /L5-code/symmetric/aes_cbc_file.py 
+# SOME FUNCTIONALITY OF THIS CODE IS DERIVED FROM EXAMPLE CODE OF LECTORIAL 5
+# Functions Referenced: encrypt_file() and decrypt_file()
+# File Referenced: /L5-code/symmetric/aes_cbc_file.py 
 # Written and Published by Shekhar Kalra on Canvas
 
 # Importing necessary libraries (Cryptography and OS)
@@ -15,7 +16,6 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 
 # ENCRYPTION ----
 # this function produces an encrypted file from a plaintext file input.
-# https://cryptography.io/en/latest/hazmat/primitives/key-derivation-functions/
 def encrypt_file(input_file_path, encrypted_output_path, password):
     salt = os.urandom(16)
     kdf = PBKDF2HMAC(       
@@ -51,7 +51,7 @@ def encrypt_file(input_file_path, encrypted_output_path, password):
 
 
 # DECRYPTION ------
-# the reverse process of encryption
+# this function reverses the process of encryption
 def decrypt_file(input_file_path, decrypted_output_path, password):
     
     # opening and reading the input ciphertext file
@@ -84,35 +84,46 @@ def decrypt_file(input_file_path, decrypted_output_path, password):
     return plaintext, key, decrypted_output_path
 
 
-# Print formatting and title for Encryption
-print('\n'+ '=' *40, "\n            ENCRYPTION CBC", "\n"+"="*40)
-
-# Function call to encrypt, save output file, using studentID for password
-ciphertext, encryption_key, input_file_path, encrypted_output_path = encrypt_file(BASE + '/input/task1.txt', BASE + '/output/task1_encrypted', 's4115243')
-
-# Print results as output display
-print("Successfully encrypted plaintext file:") 
-print(input_file_path) # validate input file directory
-print("\nEncrypted ciphertext saved in: ")
-print(encrypted_output_path) # saved encrypted file directory
-
-print("\n1. ENCRYPTION KEY:")
-print(encryption_key.hex())
-print("\n2. ENCRYPTED TEXT:")
-print(ciphertext.hex())
+# MAIN FUNCTION ------
+# this function calls all the functions and format output results
+def main():
+    # Declare file paths
+    input_file_path = os.path.join(BASE, "input", "task1.txt")
+    encrypted_file_path = os.path.join(BASE, "output", "task1_encrypted")
+    decrypted_file_path = os.path.join(BASE,  "output", "task1_decrypted")
+    # Print formatting and title for Encryption
+    print('\n'+ '=' *40, "\n            ENCRYPTION CBC", "\n"+"="*40)
 
 
-# Print formatting and title for Decryption
-print('\n\n'+ '=' *40, "\n            DECRYPTION CBC", "\n"+"="*40)
+    # Function call to encrypt, save output file, using studentID for password
+    ciphertext, encryption_key, input_file_path, encrypted_output_path = encrypt_file(input_file_path, encrypted_file_path, 's4115243')
 
-# Function call to decrypt, save output file, using studentID for password
-plaintext, decryption_key, decrypted_output_path = decrypt_file(BASE + '/output/task1_encrypted', BASE + '/output/task1_decrypted', 's4115243')
+    # Print results as output display
+    print("Successfully encrypted plaintext file:") 
+    print(input_file_path) # validate input file directory
+    print("\nEncrypted ciphertext saved in: ")
+    print(encrypted_output_path) # saved encrypted file directory
 
-# Print results as output display
-print("Successfully decrypted the file! Available in the directory:") 
-print(decrypted_output_path) # saved decrypted file directory
+    print("\n1. ENCRYPTION KEY:")
+    print(encryption_key.hex()) # .hex() is for hexadecimal format
+    print("\n2. ENCRYPTED TEXT:")
+    print(ciphertext.hex())
 
-print("\n1. DECRYPTION KEY:")
-print(decryption_key.hex())  
-print("\n2. DECRYPTED TEXT:")
-print(plaintext.decode(),  '\n')  # decode from bytes to string
+
+    # Print formatting and title for Decryption
+    print('\n\n'+ '=' *40, "\n            DECRYPTION CBC", "\n"+"="*40)
+
+    # Function call to decrypt, save output file, using studentID for password
+    plaintext, decryption_key, decrypted_output_path = decrypt_file(encrypted_file_path, decrypted_file_path, 's4115243')
+
+    # Print results as output display
+    print("Successfully decrypted the file! Available in the directory:") 
+    print(decrypted_output_path) # saved decrypted file directory
+
+    print("\n1. DECRYPTION KEY:")
+    print(decryption_key.hex())  
+    print("\n2. DECRYPTED TEXT:")
+    print(plaintext.decode(),  '\n')  # decode from bytes to string
+
+if __name__ == "__main__":
+    main()
