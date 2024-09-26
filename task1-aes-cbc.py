@@ -1,21 +1,24 @@
-# make sure you have installed cryptography library
+# SOME FUNCTIONALITY OF THIS CODE IS DERIVED FROM EXAMPLE CODE OF LECTORIAL 5 
+# File Reference: /L5-code/symmetric/aes_cbc_file.py 
+# Written and Published by Shekhar Kalra on Canvas
+
+# Importing necessary libraries (Cryptography and OS)
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes, padding
 import os
 import os.path
 
-# a fix for making paths working on all OS
+#BASE fix to allow compatibility on all operating systems 
 BASE = os.path.dirname(os.path.abspath(__file__))
 
 
-# function to encrypt a plain text file and produce encrypted file.
-# a key derivation function (PBKDF) is used to derive a strong key from the password,
-# using a salt for better security.
+# ENCRYPTION ----
+# this function produces an encrypted file from a plaintext file input.
 # https://cryptography.io/en/latest/hazmat/primitives/key-derivation-functions/
-def encrypt_file(input_file_path, output_file_path, password):
+def encrypt_file(input_file_path, encrypted_output_path, password):
     salt = os.urandom(16)
-    kdf = PBKDF2HMAC(
+    kdf = PBKDF2HMAC(       
         algorithm=hashes.SHA256(),
         length=32,
         salt=salt,
@@ -24,40 +27,39 @@ def encrypt_file(input_file_path, output_file_path, password):
     key = kdf.derive(password.encode())
     
 
-    # A random IV is generated for each encryption session to ensure that 
-    # encryption of the same data results in different ciphertexts.
-    # MODE = CBC
+    # generates IV to ensure randomization of data results in different cyphertext
     iv = os.urandom(16)
-    cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
-    encryptor = cipher.encryptor()
-    # open the plaintext file to be read bytewise
-    # look at the mode= rb (read, byte)
+    cipher = Cipher(algorithms.AES(key), modes.CBC(iv)) #using CBC mode
+    encryptor = cipher.encryptor() #calls the encryptor
+
+    # opening and reading the input plaintext file
     with open(input_file_path, 'rb') as f:
         plaintext = f.read()
     
-     # AES operates on blocks of data, so PKCS7 padding is 
-    # applied to ensure the plaintext is a multiple of the block size.
+    # adds padding to ensure consistent size of blocks to operate AES
     padder = padding.PKCS7(algorithms.AES.block_size).padder()
     padded_plaintext = padder.update(plaintext) + padder.finalize()
 
-     # finally the encryption, Yay!
+    # encryption process, finalized and saved as ciphertext variable
     ciphertext = encryptor.update(padded_plaintext) + encryptor.finalize()
 
-    # create the encrypted file, look at the mode= wb (write).
-    # The salt, IV, and encrypted data are all written to the output file.
-    with open(output_file_path, 'wb') as f:
+    # creating an output file that the salt, iv, and ciphertext is written in
+    with open(encrypted_output_path, 'wb') as f:
         f.write(salt + iv + ciphertext)
+
+    return ciphertext, key, input_file_path, encrypted_output_path
+
+
+# DECRYPTION ------
+# the reverse process of encryption
+def decrypt_file(input_file_path, decrypted_output_path, password):
     
-    return salt, iv, ciphertext, key, input_file_path
-
-
-# function to decypt the encrypted file
-# just the reverse steps
-def decrypt_file(input_file_path, output_file_path, password):
+    # opening and reading the input ciphertext file
     with open(input_file_path, 'rb') as f:
         salt = f.read(16)
         iv = f.read(16)
         ciphertext = f.read()
+
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
         length=32,
@@ -66,38 +68,51 @@ def decrypt_file(input_file_path, output_file_path, password):
     )
     key = kdf.derive(password.encode())
     cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
-    decryptor = cipher.decryptor()
+    decryptor = cipher.decryptor() #calls the decryptor
+
+    # decryption process, finalized and saved as variable
     padded_plaintext = decryptor.update(ciphertext) + decryptor.finalize()
+
+    # remove the padding from the plaintext
     unpadder = padding.PKCS7(algorithms.AES.block_size).unpadder()
     plaintext = unpadder.update(padded_plaintext) + unpadder.finalize()
-    with open(output_file_path, 'wb') as f:
+
+    # saving the plaintext as an output file
+    with open(decrypted_output_path, 'wb') as f:
         f.write(plaintext)
     
-    return plaintext, key
-
-# call encryption function
-#prints a line separator
-print('\n'+ '=' *40, "\nENCRYPTION CBC", "\n"+"="*40)
+    return plaintext, key, decrypted_output_path
 
 
+# Print formatting and title for Encryption
+print('\n'+ '=' *40, "\n            ENCRYPTION CBC", "\n"+"="*40)
 
-# choose any random password for the third argument
-salt, iv, ciphertext, key, input_file_path = encrypt_file(BASE + '/input/task1.txt', BASE + '/output/task1', 's4115243')
-print("Successfully encrypted file ", input_file_path)
-print("Salt: ", salt.hex())  # Print the salt in hexadecimal format
-print("IV: ", iv.hex())  # Print the IV in hexadecimal format
-print("\nCiphertext: ","\n"+ ciphertext.hex())  # Print the ciphertext in hexadecimal format
-print("\nEncryption Key: ", key.hex())  # Print the key in hexadecimal format
+# Function call to encrypt, save output file, using studentID for password
+ciphertext, encryption_key, input_file_path, encrypted_output_path = encrypt_file(BASE + '/input/task1.txt', BASE + '/output/task1_encrypted', 's4115243')
 
-print('─' * 10) 
+# Print results as output display
+print("Successfully encrypted plaintext file:") 
+print(input_file_path) # validate input file directory
+print("\nEncrypted ciphertext saved in: ")
+print(encrypted_output_path) # saved encrypted file directory
 
-# call decryption function 
+print("\n1. ENCRYPTION KEY:")
+print(encryption_key.hex())
+print("\n2. ENCRYPTED TEXT:")
+print(ciphertext.hex())
 
-# choose any random password for the third argument
-decrypted_text, decryption_key = decrypt_file(BASE + '/output/task1', BASE + '/output/decrypted1', 's4115243')
-print("Now look at the decrypted file inside out sub-directory")
-print("Decrypted Text:")
-print(decrypted_text.decode())  # Decode the bytes to a string
-print("\nDecryption Key:")
-print(decryption_key.hex())  # Print the key in hexadecimal format
-print('─' * 10) 
+
+# Print formatting and title for Decryption
+print('\n\n'+ '=' *40, "\n            DECRYPTION CBC", "\n"+"="*40)
+
+# Function call to decrypt, save output file, using studentID for password
+plaintext, decryption_key, decrypted_output_path = decrypt_file(BASE + '/output/task1_encrypted', BASE + '/output/task1_decrypted', 's4115243')
+
+# Print results as output display
+print("Successfully decrypted the file! Available in the directory:") 
+print(decrypted_output_path) # saved decrypted file directory
+
+print("\n1. DECRYPTION KEY:")
+print(decryption_key.hex())  
+print("\n2. DECRYPTED TEXT:")
+print(plaintext.decode(),  '\n')  # decode from bytes to string
