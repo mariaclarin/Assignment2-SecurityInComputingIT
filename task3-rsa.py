@@ -39,13 +39,13 @@ def save_keys(private_key, public_key, private_key_path, public_key_path):
         format=serialization.PublicFormat.SubjectPublicKeyInfo
     )
     
-    # decoded format for printing purposes
-    decoded_private_key = private_key_pem.decode('utf-8')
-    decoded_public_key = public_key_pem.decode('utf-8')
-    print("1. Private Key:")
-    print(decoded_private_key)
-    print("\n2. Public Key:")
-    print(decoded_public_key)
+    # # decoded format for printing purposes
+    # decoded_private_key = private_key_pem.decode('utf-8')
+    # decoded_public_key = public_key_pem.decode('utf-8')
+    # print("1. Private Key:")
+    # print(decoded_private_key)
+    # print("\n2. Public Key:")
+    # print(decoded_public_key)
 
     #save the private key and public key in seperate files 
     with open(private_key_path, "wb") as priv:
@@ -128,8 +128,7 @@ def verify_signature(data, signature, public_key):
             ),
             hashes.SHA256()
         )
-        print("Signatures successfully verified! Data integrity is upheld.")
-        return 'True'
+        return True
     except Exception as e:
         print(f"Signature verification failed: {e}") 
         return False
@@ -148,17 +147,25 @@ def measure_time(operation, *args):
 def main():
     # For loop to run for two specified key sizes 1024 and 2048-bits
     for key_size in [1024, 2048]:
-        # Print formatting and title for RSA Process for each key_size iteration
-        print('\n\n******************************************************************************')
-        print(f"************** RSA ENCRYPTION AND DECRYPTION WITH {key_size}-bit KEYS **************")
-        print('******************************************************************************\n')
+        # # Print formatting and title for RSA Process for each key_size iteration
+        # print('\n\n******************************************************************************')
+        # print(f"************** RSA ENCRYPTION AND DECRYPTION WITH {key_size}-bit KEYS **************")
+        # print('******************************************************************************\n')
         
-        # Print formatting and title for Key Generation and Output
-        print('=' *40, "\n             KEY GENERATION", "\n"+"="*40)
+        # # Print formatting and title for Key Generation and Output
+        # print('=' *40, "\n             KEY GENERATION", "\n"+"="*40)
+
+        # saving the private & public keys for each key size iteration
+        if key_size == 1024:
+            private_key_path = os.path.join(BASE, "keys", "task3_1024bit_privatekey")
+            public_key_path = os.path.join(BASE,  "keys", "task3_1024bit_publickey")
+        elif key_size == 2048:
+            private_key_path = os.path.join(BASE, "keys", "task3_2048bit_privatekey")
+            public_key_path = os.path.join(BASE,  "keys", "task3_2048bit_publickey")
+        else:
+            print("Key size ", key_size, " not included in the option.")
 
         # Generates private & public keys
-        private_key_path = os.path.join(BASE, "keys", "task3_privatekey")
-        public_key_path = os.path.join(BASE,  "keys", "task3_publickey")
         private_key, public_key = generate_keys(key_size)
 
         # Save the keys to the seperate paths and print  
@@ -169,25 +176,25 @@ def main():
         encrypted_file_path = os.path.join(BASE, "output", "task3_encrypted")
         decrypted_file_path = os.path.join(BASE,  "output", "task3_decrypted")
 
-        # Print formatting and title for Encryption
-        print('\n'+ '=' *40, "\n            ENCRYPTION RSA", "\n"+"="*40)
+        # # Print formatting and title for Encryption
+        # print('\n'+ '=' *40, "\n            ENCRYPTION RSA", "\n"+"="*40)
 
         # Function call to encrypt input file, save the output file, and measure the time
         encrypt_time, (ciphertext, input_file_path, encrypted_output_path) = measure_time(
             encrypt_file, input_file_path, public_key, encrypted_file_path
         )
 
-        # Print results as output display
-        print("Successfully encrypted plaintext file:") 
-        print(input_file_path) # validate input file directory
-        print("\nEncrypted ciphertext saved in: ")
-        print(encrypted_output_path) # saved encrypted file directory
-        print("\nENCRYPTED TEXT:")
-        print(ciphertext.hex())
+        # # Print results as output display
+        # print("Successfully encrypted plaintext file:") 
+        # print(input_file_path) # validate input file directory
+        # print("\nEncrypted ciphertext saved in: ")
+        # print(encrypted_output_path) # saved encrypted file directory
+        # print("\nENCRYPTED TEXT:")
+        # print(ciphertext.hex())
 
 
-        # Print formatting and title for Decryption
-        print('\n'+ '=' *40, "\n            DECRYPTION RSA", "\n"+"="*40)
+        # # Print formatting and title for Decryption
+        # print('\n'+ '=' *40, "\n            DECRYPTION RSA", "\n"+"="*40)
 
         # Function call to decrypt encrypted file, save the output file, and measure the time
         decrypt_time, (plaintext, decrypted_output_path) = measure_time(
@@ -205,29 +212,31 @@ def main():
             print("Key size ", key_size, " not included in the option.")
 
 
-        # Print results as output display
-        print("Successfully decrypted the file! Available in the directory:") 
-        print(decrypted_output_path) # saved decrypted file directory
-        print("\nDECRYPTED TEXT:")
-        print(plaintext.decode())  # decode from bytes to string
-
-        # Print formatting and title for Signature
-        print('\n'+ '=' *40, "\n              SIGNATURE", "\n"+"="*40)
+        # # Print results as output display
+        # print("Successfully decrypted the file! Available in the directory:") 
+        # print(decrypted_output_path) # saved decrypted file directory
+        # print("\nDECRYPTED TEXT:")
+        # print(plaintext.decode())  # decode from bytes to string
 
         # Signing the original data
         with open(input_file_path, "rb") as file:
             original_data = file.read()
         signature = sign_data(original_data, private_key)
 
-        # Print the signature
-        print("Signature:")
-        print(signature.hex(), '\n')
-        
-        # Verify the signatures
-        print("Signature Verification Status:")
-        verify_signature(original_data, signature, public_key)
-        print()
+
+        verification_status = verify_signature(original_data, signature, public_key)
+
+ 
     
+    
+    # Print formatting and title for Signature
+    print('\n'+ '=' *40, "\n              SIGNATURE", "\n"+"="*40)
+    # Print the signature
+    print("Signature:")
+    print(signature.hex(), '\n')
+    # Verify the signatures
+    print("Signature Verification Status:", verification_status)
+
     # Print the time comparison for the 2 key sizes
     print('\n'+ '=' *40, "\n         TIME COMPARISON", "\n"+"="*40)
     print(f"Encryption time for 1024-bit key: {encrypt_1024_time:.6f} seconds")
