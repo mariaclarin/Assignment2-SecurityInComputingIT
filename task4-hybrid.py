@@ -1,6 +1,6 @@
 # SOME FUNCTIONALITY OF THIS CODE IS DERIVED FROM EXAMPLE CODE OF LECTORIAL 7
 # Functions Referenced: encrypt_message(), decrypt_message(), generate_rsa_keys()
-# File Referenced: /L7-code/hybridcrypto.py 
+# File Referenced: /L7-code/hybrid_crypto.py 
 # Written and Published by Shekhar Kalra on Canvas
 
 # importing necessary libraries (Cryptography and OS)
