@@ -81,8 +81,8 @@ def main():
     rsa_private_key, rsa_public_key = generate_rsa_keys()
 
     # save RSA keys to files
-    rsa_private_key_path = os.path.join(BASE, 'output', 'task4_rsa_private')
-    rsa_public_key_path = os.path.join(BASE, 'output', 'task4_rsa_public')
+    rsa_private_key_path = os.path.join(BASE, 'keys', 'task4_rsa_private_key')
+    rsa_public_key_path = os.path.join(BASE, 'keys', 'task4_rsa_public_key')
 
     # save the private RSA key
     with open(rsa_private_key_path, 'wb') as private_file:
@@ -117,9 +117,9 @@ def main():
     print("\nEncrypted AES Symmetric Key:", b64encode(encrypted_aes_key).decode())
 
     # save the encrypted data and key to files
-    encrypted_data_path = os.path.join(BASE, 'output', 'task4_encrypted_data')
-    encrypted_aes_key_path = os.path.join(BASE, 'output', 'task4_encrypted_aes_key')
-    iv_path = os.path.join(BASE, 'output', 'task4_iv')
+    encrypted_data_path = os.path.join(BASE, 'output', 'task4_encrypted')
+    encrypted_aes_key_path = os.path.join(BASE, 'keys', 'task4_encrypted_aes_key')
+    iv_path = os.path.join(BASE, 'keys', 'task4_iv')
 
     with open(encrypted_data_path, 'wb') as enc_data_file:
         enc_data_file.write(encrypted_data)
@@ -138,7 +138,7 @@ def main():
     print("Decrypted Message:", decrypted_message)
 
     # save the decrypted message to a file
-    decrypted_message_path = os.path.join(BASE, 'output', 'task4_decrypted_message')
+    decrypted_message_path = os.path.join(BASE, 'output', 'task4_decrypted')
     with open(decrypted_message_path, 'w') as dec_msg_file:
         dec_msg_file.write(decrypted_message)
 
