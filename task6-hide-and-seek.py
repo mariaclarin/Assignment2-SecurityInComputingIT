@@ -1,4 +1,6 @@
 """
+Note to Marker: Before running the code, aside from the cryptography library, please install the libraries: numpy, Pillow, and opencv-python
+Command: pip install numpy pillow opencv-python
 
 SOME FUNCTIONALITY OF THIS CODE IS DERIVED FROM EXAMPLE CODE OF LECTORIAL 7 
 - Functions Referenced: encrypt_message(), decrypt_message()
@@ -32,7 +34,7 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 # AES encryption function
 def aes_encrypt_message(plaintext, key):
     iv = urandom(16)  # generate a random 16-byte initialization vector (IV)
-    cipher = Cipher(algorithms.AES(key), modes.CFB(iv), backend=default_backend())
+    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
     encryptor = cipher.encryptor()
 
     # pad the message to match the AES block size using PKCS7 padding
@@ -50,7 +52,7 @@ def aes_decrypt_message(ciphertext, key):
     iv = ciphertext[:16]  # get the IV from the first 16 bytes
     encrypted_data = ciphertext[16:]  # the rest is the encrypted data
 
-    cipher = Cipher(algorithms.AES(key), modes.CFB(iv), backend=default_backend())
+    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
     decryptor = cipher.decryptor()
 
     # decrypt the data
@@ -215,7 +217,6 @@ def rebuild_image_from_dct_color(dct_coefficients, shapes, output_image_path):
     # convert BGR to RGB (because OpenCV uses BGR by default) and save the image using Pillow
     output_image = Image.fromarray(cv2.cvtColor(rebuilt_image, cv2.COLOR_BGR2RGB))
     output_image.save(output_image_path)  # save the image
-    print('\n' + '=' * 40, "\n        STEGO IMAGE CREATION PROCESS", "\n" + '=' * 40)
     print(f"Stego image saved to {output_image_path}")
 
 def main():
@@ -224,7 +225,7 @@ def main():
     output_image_path = os.path.join(BASE, 'output', 'task6_stego_image.jpeg')
 
     # get the secret message from the user
-    original_message = input("Enter the secret message you want to hide: ")
+    original_message = input("\nEnter the secret message you want to hide (Example: Today is a great day): ")
 
     # generate a random 256-bit AES key (32 bytes)
     key = urandom(32)
@@ -238,6 +239,9 @@ def main():
     # Print the encrypted message in base64 string
     print('\n' + '=' * 40, "\n        ENCRYPTION PROCESS", "\n" + '=' * 40)
     print(f"Encrypted Message (Base64 String): {encrypted_message_str}")
+
+    print('\n' + '=' * 40, "\n        STEGO IMAGE CREATION PROCESS", "\n" + '=' * 40)
+    print(f"Generating Stego Image... Please wait a moment as this process may take a while...\n")
 
     # extract DCT coefficients from the color channels of the input image
     dct_coefficients, image_shapes = extract_dct_color(input_image_path)

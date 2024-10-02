@@ -35,7 +35,7 @@ def encrypt_message(plaintext, rsa_public_key):
 
     # encrypt the data with AES (symmetric encryption)
     iv = urandom(16)  # initialization vector
-    cipher = Cipher(algorithms.AES(aes_key), modes.CFB(iv), backend=default_backend())
+    cipher = Cipher(algorithms.AES(aes_key), modes.CBC(iv), backend=default_backend())
     encryptor = cipher.encryptor()
     padder = sym_padding.PKCS7(algorithms.AES.block_size).padder()
     padded_plaintext = padder.update(plaintext.encode()) + padder.finalize()
@@ -66,7 +66,7 @@ def decrypt_message(encrypted_data, iv, encrypted_aes_key, rsa_private_key):
     )
 
     # decrypt the message using the decrypted AES key (AES)
-    cipher = Cipher(algorithms.AES(aes_key), modes.CFB(iv), backend=default_backend())
+    cipher = Cipher(algorithms.AES(aes_key), modes.CBC(iv), backend=default_backend())
     decryptor = cipher.decryptor()
     padded_message = decryptor.update(encrypted_data) + decryptor.finalize()
     unpadder = sym_padding.PKCS7(algorithms.AES.block_size).unpadder()
