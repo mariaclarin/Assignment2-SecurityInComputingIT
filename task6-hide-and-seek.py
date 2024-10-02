@@ -1,17 +1,20 @@
-# SOME FUNCTIONALITY OF THIS CODE IS DERIVED FROM EXAMPLE CODE OF LECTORIAL 7 
-# Functions Referenced: encrypt_message(), decrypt_message()
-# File Referenced: /L7-code/hybrid_crypto.py 
-# Written and Published by Shekhar Kalra on Canvas
+"""
 
-# SOME FUNCTIONALITY OF THIS CODE IS ALSO DERIVED FROM EXTERNAL DOCUMENTATIONS AND AI TOOLS 
-# Methods and Implementations Referenced:
-# - Explanation and implementation of LSB and DCT-based image steganography techniques:
-#   https://stackoverflow.com/questions/35396977/lsb-dct-based-image-steganography
-# - Discussion on how lossy compression affects steganography in images:
-#   https://stackoverflow.com/questions/29677726/steganography-in-lossy-compression-java
-# - Assistance and code explanations provided by ChatGPT, OpenAI:
-#   ChatGPT, OpenAI. (2024). Code explanations and suggestions for DCT-based steganography. Accessed 29 Sept 2024.
-#   https://chat.openai.com/
+SOME FUNCTIONALITY OF THIS CODE IS DERIVED FROM EXAMPLE CODE OF LECTORIAL 7 
+- Functions Referenced: encrypt_message(), decrypt_message()
+- File Referenced: /L7-code/hybrid_crypto.py 
+- Written and Published by Shekhar Kalra on Canvas
+
+SOME FUNCTIONALITY OF THIS CODE IS ALSO DERIVED FROM EXTERNAL DOCUMENTATIONS AND AI TOOLS 
+References:
+User35396977 (2016) LSB-DCT based Image steganography, StackOverflow, accessed 29 Sept 2024.
+    https://stackoverflow.com/questions/35396977/lsb-dct-based-image-steganography
+User29677726 (2015) Steganography in lossy compression (JAVA), StackOverflow, accessed 29 Sept 2024.
+    https://stackoverflow.com/questions/29677726/steganography-in-lossy-compression-java
+ChatGPT (2024) Code explanations and suggestions for DCT-based steganography, OpenAI, accessed 29 Sept 2024.
+    https://chat.openai.com/
+
+"""
 
 import numpy as np
 from PIL import Image
