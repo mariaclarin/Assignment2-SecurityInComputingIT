@@ -153,10 +153,7 @@ def generate_keys(private_key_path, public_key_path, bits=34):
 # PADDING -----
 # function to add padding to an input message (following PKCS#1 v1.5)
 '''
-    For padding, we decided to use PKCS#1 v1.5 format.
-    PKCS#1 v1.5 adds padding to a message following the structure of: 0x00 | 0x02 | random non-zero bytes | 0x00 | message 
-    It is most applicable to deterministic encryptions (works well for this case esp. since signatures are not required, only message encryption). 
-    It is also one of the most commonly known formats/padding types for encryption. 
+    For padding, just for example implementation, we follow PKCS#1 v1.5 format of: 0x00 | 0x02 | random non-zero bytes | 0x00 | message 
     Ref:
     https://crypto.stackexchange.com/questions/61178/why-ps-does-differ-between-pkcs1-v1-5-padding-for-signature-and-for-encryption
     https://www.ibm.com/docs/en/zos/2.5.0?topic=cryptography-pkcs-1-formats
@@ -174,7 +171,7 @@ def padder(message, block_size):
     # joining the sections into a padded message following the PKCS#1 v1.5 format: 0x00 | 0x02 | random non-zero bytes | 0x00 | message 
     padded_message = b'\x00\x02' + padding + b'\x00' + message_bytes
     print(f"\nPadded Message (in hex, PKCS#1 v1.5) : {padded_message.hex()}")
-    print(f"Padded Message (in int) : {int.from_bytes(padded_message)}\n")
+    print(f"Padded Message (in int) : {int.from_bytes(padded_message, byteorder='big')}\n")
     
     return int.from_bytes(padded_message, byteorder='big') #return as int data type to allow the mathematical calculations 
 
