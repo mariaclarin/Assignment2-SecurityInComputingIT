@@ -116,19 +116,11 @@ def main():
     print("\nInitialization Vector (IV):", b64encode(iv).decode())
     print("\nEncrypted AES Symmetric Key:", b64encode(encrypted_aes_key).decode())
 
-    # save the encrypted data and key to files
+    # save the encrypted data to files
     encrypted_data_path = os.path.join(BASE, 'output', 'task4_encrypted')
-    encrypted_aes_key_path = os.path.join(BASE, 'keys', 'task4_encrypted_aes_key')
-    iv_path = os.path.join(BASE, 'keys', 'task4_iv')
 
     with open(encrypted_data_path, 'wb') as enc_data_file:
         enc_data_file.write(encrypted_data)
-
-    with open(encrypted_aes_key_path, 'wb') as enc_key_file:
-        enc_key_file.write(encrypted_aes_key)
-
-    with open(iv_path, 'wb') as iv_file:
-        iv_file.write(iv)
 
     # decrypt the message
     decrypted_message = decrypt_message(encrypted_data, iv, encrypted_aes_key, rsa_private_key)
